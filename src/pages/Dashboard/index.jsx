@@ -15,7 +15,6 @@ export default function Dashboard() {
   const { conta_id } = useParams();
 
   const handleInputs = (e) => {
-    console.log(inputs);
     setInputs((i) => {
       return {
         ...i,
