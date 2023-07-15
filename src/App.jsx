@@ -1,12 +1,7 @@
-import Table from "./components/Table";
-
+import { Home } from "./pages/Home";
+import "./index.css";
 function App() {
-  return (
-    <>
-      <h1>Banco Supera</h1>
-      <Table />
-    </>
-  );
+  return <Home />;
 }
 
 export default App;

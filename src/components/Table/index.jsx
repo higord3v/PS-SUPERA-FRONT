@@ -6,9 +6,8 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { useEffect, useState } from "react";
-import { api } from "../../utils/api";
-
+import { format } from "date-fns";
+import fromUnixTime from "date-fns/fromUnixTime";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
@@ -29,23 +28,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export default function CustomizedTables() {
-  const [transferencias, setTransferencias] = useState([]);
-
-  useEffect(() => {
-    (async () => {
-      const { data } = await api.get("/transferencia", {
-        params: {
-          operador: "",
-          inicio: "",
-          fim: "",
-          conta_id: 2,
-        },
-      });
-      setTransferencias(data);
-    })();
-  }, []);
-
+export default function CustomizedTables({ transferencias, saldos }) {
   let real = new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
@@ -54,6 +37,14 @@ export default function CustomizedTables() {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
+        <TableHead>
+          <TableRow>
+            <TableCell>Saldo Total: {real.format(saldos.total)}</TableCell>
+            <TableCell>
+              Saldo No Período: {real.format(saldos.periodo)}
+            </TableCell>
+          </TableRow>
+        </TableHead>
         <TableHead>
           <TableRow>
             <StyledTableCell>dados</StyledTableCell>
@@ -66,7 +57,7 @@ export default function CustomizedTables() {
           {transferencias.map((t) => (
             <StyledTableRow key={t.id}>
               <StyledTableCell component="th" scope="row">
-                {new Date().toLocaleDateString(t.dataTransferencia)}
+                {format(fromUnixTime(t.dataTransferencia), "dd/MM/yyyy")}
               </StyledTableCell>
               <StyledTableCell>{real.format(t.valor)}</StyledTableCell>
               <StyledTableCell>{t.tipo}</StyledTableCell>
@@ -78,15 +69,3 @@ export default function CustomizedTables() {
     </TableContainer>
   );
 }
-
-/* 
-id": 1,
-		"dataTransferencia": "2019-01-01T09:00:00Z",
-		"valor": 30895.46,
-		"tipo": "DEPOSITO",
-		"nomeOperadorTransacao": null,
-		"conta": {
-			"id": 1,
-			"nome": "Fulano"
-
-*/
